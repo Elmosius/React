@@ -1,0 +1,6 @@
+export const fetchAPI = async (url: string | URL, options: RequestInit) => {
+  const response = await fetch(url, {
+    ...options,
+  });
+  return await response.json();
+};
