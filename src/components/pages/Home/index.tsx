@@ -1,14 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { getAllProduct, getProductById } from "../../../api/product.ts";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { type FormEvent, useEffect, useState } from "react";
+import {
+  addProduct,
+  getAllProduct,
+  getProductById,
+} from "../../../api/product.ts";
 import Toast from "../../ui/Toast";
 import Button from "../../ui/Button";
 import Product from "../../ui/Product";
 import DetailProduct from "../../ui/DetailProduct";
 import Skeleton from "../../ui/Skeleton";
+import Card from "../../ui/Card";
+import Form from "../../ui/Form";
+import type { IProduct } from "../../../types/product.ts";
 
 export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [fetchProduts, setFetchProducts] = useState(false);
   const [showProduct, setShowProduct] = useState<number | null>(null);
 
@@ -28,6 +36,29 @@ export default function Home() {
     enabled: showProduct !== null,
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data: IProduct) => addProduct(data),
+    onSuccess: () => {
+      setFetchProducts(true);
+      setShowForm(false);
+    },
+  });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const payload: IProduct = {
+      id: Math.floor(Math.random() * 1000000),
+      title: form.title.value,
+      description: form.description.value,
+      price: Number(form.price.value),
+      category: form.category.value,
+      image: form.image.value,
+    };
+
+    mutate(payload);
+  };
+
   useEffect(() => {
     if (isSuccess) {
       setShowSuccess(true);
@@ -40,6 +71,18 @@ export default function Home() {
   return (
     <>
       <section className={"container mx-auto py-5 px-20"}>
+        <Button
+          classList={"mx-2 my-2"}
+          type="button"
+          onClick={() => setShowForm(!showForm)}
+        >
+          Add Products
+        </Button>
+
+        <Card showCard={showForm} onClick={() => setShowForm(false)}>
+          <Form onSubmit={handleSubmit} loading={isPending} />
+        </Card>
+
         {showSuccess &&
           Toast({
             message: "Product added successfully",
@@ -64,26 +107,15 @@ export default function Home() {
         )}
       </section>
 
-      <div
-        className={`fixed inset-0 w-screen h-screen bg-black/50 ${showProduct ? "flex items-center " : "hidden"}`}
-      >
-        <div className="relative w-1/2 h-1/2 mx-auto bg-white rounded-md p-4">
-          {isLoadingDetailProduct ? (
-            <Skeleton type={"detailProduct"} />
-          ) : isErrorDetailProduct ? (
-            <p>Error fetching product. Please try again later.</p>
-          ) : (
-            <DetailProduct data={detailProduct} />
-          )}
-
-          <button
-            onClick={() => setShowProduct(null)}
-            className="absolute top-4 right-5  rounded-full font-bold cursor-pointer"
-          >
-            x
-          </button>
-        </div>
-      </div>
+      <Card showCard={showProduct} onClick={() => setShowProduct(null)}>
+        {isLoadingDetailProduct ? (
+          <Skeleton type={"detailProduct"} />
+        ) : isErrorDetailProduct ? (
+          <p>Error fetching product. Please try again later.</p>
+        ) : (
+          <DetailProduct data={detailProduct} />
+        )}
+      </Card>
     </>
   );
 }
