@@ -1,18 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import type { IProduct } from "../../../types/product.ts";
+import { getAllProduct, getProductById } from "../../../api/product.ts";
+import Toast from "../../ui/Toast";
+import Button from "../../ui/Button";
+import Product from "../../ui/Product";
+import DetailProduct from "../../ui/DetailProduct";
+import Skeleton from "../../ui/Skeleton";
 
 export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [fetchProduts, setFetchProducts] = useState(false);
+  const [showProduct, setShowProduct] = useState<number | null>(null);
 
   const { data, isError, isSuccess, isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => {
-      const res = await fetch("https://fakestoreapi.com/products");
-      return res.json();
-    },
+    queryFn: async () => getAllProduct(),
     enabled: fetchProduts,
+  });
+
+  const {
+    data: detailProduct,
+    isLoading: isLoadingDetailProduct,
+    isError: isErrorDetailProduct,
+  } = useQuery({
+    queryKey: ["product", showProduct],
+    queryFn: async () => getProductById(showProduct!),
+    enabled: showProduct !== null,
   });
 
   useEffect(() => {
@@ -25,60 +38,52 @@ export default function Home() {
   }, [isSuccess]);
 
   return (
-    <section className={"container mx-auto py-5 px-20"}>
-      {showSuccess && (
-        <p className="p-4 my-4 shadow-md fixed right-3 top-3  text-black bg-gray-200 rounded-md">
-          Data fetched successfully!
-        </p>
-      )}
+    <>
+      <section className={"container mx-auto py-5 px-20"}>
+        {showSuccess &&
+          Toast({
+            message: "Product added successfully",
+          })}
 
-      {!fetchProduts && (
-        <button
-          onClick={() => setFetchProducts(true)}
-          className="p-2 border rounded-lg"
-        >
-          See Products
-        </button>
-      )}
+        {!fetchProduts && (
+          <Button type="button" onClick={() => setFetchProducts(true)}>
+            See Products
+          </Button>
+        )}
 
-      {isLoading ? (
-        <div className={"grid grid-cols-1 lg:grid-cols-3 gap-4"}>
-          {Array.from({ length: 9 }).map((_, index) => (
-            <div
-              className="bg-gray-100 p-4 rounded-md flex flex-col items-center justify-center gap-2 animate-pulse w-full h-64"
-              key={`loading-${index}`}
-            ></div>
-          ))}
-        </div>
-      ) : (
-        <div>
-          {isError ? (
-            <p>Error fetching products. Please try again later.</p>
+        {isLoading ? (
+          <Skeleton type={"product"} number={9} />
+        ) : (
+          <div>
+            {isError ? (
+              <p>Error fetching products. Please try again later.</p>
+            ) : (
+              <Product data={data} setShowProduct={setShowProduct} />
+            )}
+          </div>
+        )}
+      </section>
+
+      <div
+        className={`fixed inset-0 w-screen h-screen bg-black/50 ${showProduct ? "flex items-center " : "hidden"}`}
+      >
+        <div className="relative w-1/2 h-1/2 mx-auto bg-white rounded-md p-4">
+          {isLoadingDetailProduct ? (
+            <Skeleton type={"detailProduct"} />
+          ) : isErrorDetailProduct ? (
+            <p>Error fetching product. Please try again later.</p>
           ) : (
-            <div className={"grid grid-cols-1 lg:grid-cols-3 gap-4"}>
-              {data?.map((product: IProduct) => (
-                <div
-                  key={product.id}
-                  className={
-                    "bg-gray-100 p-4 rounded-md flex flex-col items-center justify-center gap-2"
-                  }
-                >
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className={"w-46 h-46 object-cover"}
-                  />
-                  <h2 className={"text-lg font-bold"}>{product.title}</h2>
-                  <p className={"text-gray-600 line-clamp-1"}>
-                    {product.description}
-                  </p>
-                  <p className={"text-gray-600"}>Price: ${product.price}</p>
-                </div>
-              ))}
-            </div>
+            <DetailProduct data={detailProduct} />
           )}
+
+          <button
+            onClick={() => setShowProduct(null)}
+            className="absolute top-4 right-5  rounded-full font-bold cursor-pointer"
+          >
+            x
+          </button>
         </div>
-      )}
-    </section>
+      </div>
+    </>
   );
 }
