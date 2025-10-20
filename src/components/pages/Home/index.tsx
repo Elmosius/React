@@ -49,7 +49,7 @@ export default function Home() {
     const form = e.target as HTMLFormElement;
     const payload: IProduct = {
       id: Math.floor(Math.random() * 1000000),
-      title: form.title.value,
+      title: `${form.title.valueOf}`,
       description: form.description.value,
       price: Number(form.price.value),
       category: form.category.value,
