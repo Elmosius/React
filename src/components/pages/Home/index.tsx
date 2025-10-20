@@ -17,13 +17,13 @@ import type { IProduct } from "../../../types/product.ts";
 export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [fetchProduts, setFetchProducts] = useState(false);
+  const [fetchProducts, setFetchProducts] = useState(false);
   const [showProduct, setShowProduct] = useState<number | null>(null);
 
   const { data, isError, isSuccess, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: async () => getAllProduct(),
-    enabled: fetchProduts,
+    enabled: fetchProducts,
   });
 
   const {
@@ -36,11 +36,16 @@ export default function Home() {
     enabled: showProduct !== null,
   });
 
-  const { mutate, isPending } = useMutation({
+  const {
+    mutate,
+    isPending,
+    isSuccess: isSuccessAddProduct,
+  } = useMutation({
     mutationFn: async (data: IProduct) => addProduct(data),
     onSuccess: () => {
       setFetchProducts(true);
       setShowForm(false);
+      setShowSuccess(true);
     },
   });
 
@@ -56,17 +61,19 @@ export default function Home() {
       image: form.image.value,
     };
 
-    mutate(payload);
+    mutate(payload, {
+      onSuccess: () => form.reset(),
+    });
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || isSuccessAddProduct) {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);
     }
-  }, [isSuccess]);
+  }, [isSuccess, isSuccessAddProduct]);
 
   return (
     <>
@@ -88,7 +95,7 @@ export default function Home() {
             message: "Product added successfully",
           })}
 
-        {!fetchProduts && (
+        {!fetchProducts && (
           <Button type="button" onClick={() => setFetchProducts(true)}>
             See Products
           </Button>
