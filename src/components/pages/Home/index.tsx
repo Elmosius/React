@@ -13,6 +13,7 @@ import Skeleton from "../../ui/Skeleton";
 import Card from "../../ui/Card";
 import Form from "../../ui/Form";
 import type { IProduct } from "../../../types/product.ts";
+import { queryClient } from "../../../utils/query-client.ts";
 
 export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -42,8 +43,14 @@ export default function Home() {
     isSuccess: isSuccessAddProduct,
   } = useMutation({
     mutationFn: async (data: IProduct) => addProduct(data),
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      alert("Product added successfully" + data?.title);
       setFetchProducts(true);
+      // Untuk mengupdate data terbaru
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    // apapun yang dijalankan setelah mutasi selesai
+    onSettled: () => {
       setShowForm(false);
       setShowSuccess(true);
     },
@@ -54,7 +61,7 @@ export default function Home() {
     const form = e.target as HTMLFormElement;
     const payload: IProduct = {
       id: Math.floor(Math.random() * 1000000),
-      title: `${form.title.valueOf}`,
+      title: form.title.value,
       description: form.description.value,
       price: Number(form.price.value),
       category: form.category.value,
