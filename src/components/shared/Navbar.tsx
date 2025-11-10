@@ -24,6 +24,21 @@ export default function Navbar() {
             Pokemon
           </Link>
         </li>
+
+        <li>
+          <Link
+            to={'/search'}
+            className={'text-blue-500'}
+            activeProps={activeProps}
+            search={{
+              query: 'hello',
+              sort: 'asc',
+              categories: ['all'],
+            }}
+          >
+            search
+          </Link>
+        </li>
       </ul>
     </nav>
   );
