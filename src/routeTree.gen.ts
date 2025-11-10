@@ -11,7 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogIdRouteImport } from './routes/blog/$id'
+import { Route as PokemonIndexRouteImport } from './routes/pokemon/index'
+import { Route as PokemonIdRouteImport } from './routes/pokemon/$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 
@@ -25,9 +26,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogIdRoute = BlogIdRouteImport.update({
-  id: '/blog/$id',
-  path: '/blog/$id',
+const PokemonIndexRoute = PokemonIndexRouteImport.update({
+  id: '/pokemon/',
+  path: '/pokemon/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PokemonIdRoute = PokemonIdRouteImport.update({
+  id: '/pokemon/$id',
+  path: '/pokemon/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -46,14 +52,16 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/blog/$id': typeof BlogIdRoute
+  '/pokemon/$id': typeof PokemonIdRoute
+  '/pokemon': typeof PokemonIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/blog/$id': typeof BlogIdRoute
+  '/pokemon/$id': typeof PokemonIdRoute
+  '/pokemon': typeof PokemonIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,20 +69,34 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/blog/$id': typeof BlogIdRoute
+  '/pokemon/$id': typeof PokemonIdRoute
+  '/pokemon/': typeof PokemonIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth/login' | '/auth/register' | '/blog/$id'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/auth/login'
+    | '/auth/register'
+    | '/pokemon/$id'
+    | '/pokemon'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth/login' | '/auth/register' | '/blog/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/auth/login'
+    | '/auth/register'
+    | '/pokemon/$id'
+    | '/pokemon'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/auth/login'
     | '/auth/register'
-    | '/blog/$id'
+    | '/pokemon/$id'
+    | '/pokemon/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -82,7 +104,8 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
-  BlogIdRoute: typeof BlogIdRoute
+  PokemonIdRoute: typeof PokemonIdRoute
+  PokemonIndexRoute: typeof PokemonIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -101,11 +124,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/$id': {
-      id: '/blog/$id'
-      path: '/blog/$id'
-      fullPath: '/blog/$id'
-      preLoaderRoute: typeof BlogIdRouteImport
+    '/pokemon/': {
+      id: '/pokemon/'
+      path: '/pokemon'
+      fullPath: '/pokemon'
+      preLoaderRoute: typeof PokemonIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pokemon/$id': {
+      id: '/pokemon/$id'
+      path: '/pokemon/$id'
+      fullPath: '/pokemon/$id'
+      preLoaderRoute: typeof PokemonIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -130,7 +160,8 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
-  BlogIdRoute: BlogIdRoute,
+  PokemonIdRoute: PokemonIdRoute,
+  PokemonIndexRoute: PokemonIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

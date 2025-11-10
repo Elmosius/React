@@ -1,16 +1,16 @@
-import * as React from 'react'
-import {createRootRoute, Outlet} from '@tanstack/react-router'
-import Navbar from "@/components/shared/Navbar.tsx";
+import * as React from 'react';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
+import Navbar from '@/components/shared/Navbar';
 
 export const Route = createRootRoute({
-    component: RootComponent,
-})
+  component: RootComponent,
+});
 
 function RootComponent() {
-    return (
-        <React.Fragment>
-            <Navbar/>
-            <Outlet/>
-        </React.Fragment>
-    )
+  return (
+    <React.Fragment>
+      <Navbar />
+      <Outlet />
+    </React.Fragment>
+  );
 }
