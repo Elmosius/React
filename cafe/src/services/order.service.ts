@@ -1,6 +1,6 @@
 import { fetchAPI } from "../utils/fetch.ts";
 import { getLocalStorage } from "../utils/storage.ts";
-import { environment } from "../../constants/environment.ts";
+import { environment } from "../constants/environment.ts";
 import type { ICart, IOrder } from "../types/order.ts";
 
 export const getOrders = async (

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { getLocalStorage } from "../components/utils/storage.ts";
+import { getLocalStorage } from "../utils/storage";
 import { Navigate, useLocation } from "react-router-dom";
 
 interface PropTypes {

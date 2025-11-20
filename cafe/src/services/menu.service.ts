@@ -1,4 +1,4 @@
-import { environment } from "../../constants/environment.ts";
+import { environment } from "../constants/environment";
 import { fetchAPI } from "../utils/fetch.ts";
 import { getLocalStorage } from "../utils/storage.ts";
 

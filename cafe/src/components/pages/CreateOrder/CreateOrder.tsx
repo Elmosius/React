@@ -1,13 +1,13 @@
 import Button from "../../ui/Button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { type FormEvent, useState } from "react";
-import type { ICart, IMenu } from "../../types/order.ts";
+import type { ICart, IMenu } from "../../../types/order.ts";
 import { useQuery } from "@tanstack/react-query";
-import { getMenu } from "../../services/menu.service.ts";
+import { getMenu } from "../../../services/menu.service.ts";
 import { filters, tables } from "./CreateOrder.constans.ts";
 import Input from "../../ui/Input";
 import Select from "../../ui/Select";
-import { createOrder } from "../../services/order.service.ts";
+import { createOrder } from "../../../services/order.service.ts";
 
 const CreateOrder = () => {
   const [searchParams, setSearchParams] = useSearchParams();

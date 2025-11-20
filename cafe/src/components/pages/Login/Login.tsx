@@ -1,7 +1,7 @@
 import Input from "../../ui/Input";
-import { setLocalStorage } from "../../utils/storage.ts";
+import { setLocalStorage } from "../../../utils/storage.ts";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/auth.service.ts";
+import { login } from "../../../services/auth.service.ts";
 import { type FormEvent, useState } from "react";
 import Button from "../../ui/Button";
 

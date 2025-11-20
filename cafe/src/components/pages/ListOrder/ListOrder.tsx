@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getOrders, updateOrderStatus } from "../../services/order.service.ts";
+import { getOrders, updateOrderStatus } from "../../../services/order.service.ts";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
-import type { IOrder } from "../../types/order.ts";
-import { removeLocalStorage } from "../../utils/storage.ts";
+import type { IOrder } from "../../../types/order.ts";
+import { removeLocalStorage } from "../../../utils/storage.ts";
 
 const ListOrder = () => {
   const navigate = useNavigate();
